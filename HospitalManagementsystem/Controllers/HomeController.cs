@@ -20,6 +20,7 @@ namespace HospitalManagementsystem.Controllers
 
         public IActionResult Index()
         {
+            _logger.LogInformation("Logging the index method");
             return View();
         }
 
