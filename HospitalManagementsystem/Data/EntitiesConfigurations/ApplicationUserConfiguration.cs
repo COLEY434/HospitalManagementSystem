@@ -15,6 +15,7 @@ namespace HospitalManagementsystem.Data.EntitiesConfigurations
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Firstname).HasMaxLength(50).IsRequired();
             builder.Property(x => x.Lastname).HasMaxLength(50).IsRequired();
+            builder.Property(x => x.Surname).HasMaxLength(50).IsRequired();
             builder.Property(x => x.Address).IsRequired();
             builder.Property(x => x.Country).HasMaxLength(50).IsRequired();
             builder.Property(x => x.State).HasMaxLength(50).IsRequired();
