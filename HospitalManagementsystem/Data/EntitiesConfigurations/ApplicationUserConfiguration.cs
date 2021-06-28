@@ -12,12 +12,18 @@ namespace HospitalManagementsystem.Data.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
+            builder.HasKey(x => x.Id);
             builder.Property(x => x.Firstname).HasMaxLength(50).IsRequired();
             builder.Property(x => x.Lastname).HasMaxLength(50).IsRequired();
-            builder.Property(x => x.UserType).IsRequired();
-            builder.Property(x => x.LastLoggedIn).HasColumnType("datetime").IsRequired();
-            builder.Property(x => x.LastLoggedIn).HasColumnType("datetime").IsRequired(false);
-            builder.Property(x => x.UpdatedAt).HasColumnType("datetime").IsRequired(false);
+            builder.Property(x => x.Address).IsRequired();
+            builder.Property(x => x.Country).HasMaxLength(50).IsRequired();
+            builder.Property(x => x.State).HasMaxLength(50).IsRequired();
+            builder.Property(x => x.PhoneNumber).HasMaxLength(50).IsRequired();
+            builder.Property(x => x.Dob).HasMaxLength(50).IsRequired();
+            //builder.Property(x => x.UserType).IsRequired();
+            builder.Property(x => x.LastLoggedIn).HasColumnType("datetime");
+            builder.Property(x => x.CreatedAt).HasColumnType("datetime");
+            builder.Property(x => x.UpdatedAt).HasColumnType("datetime");
         }
     }
 }
