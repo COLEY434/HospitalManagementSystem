@@ -21,8 +21,9 @@ namespace HospitalManagementsystem.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
+            modelBuilder.ApplyConfiguration(new PatientConfiguration());
         }
 
-        
+        public DbSet<Patient> Patients { get; set; }
     }
 }
