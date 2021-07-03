@@ -16,6 +16,7 @@ namespace HospitalManagementsystem.Data.Entities
         public string Country { get; set; }
         public string State { get; set; }
         public string Dob { get; set; }
+        public string ImageUrl { get; set; }
         //public UserType UserType { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt{ get; set; }
