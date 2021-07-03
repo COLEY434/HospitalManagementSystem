@@ -5,8 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Events;
+using NLog.Web;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,48 +18,54 @@ namespace HospitalManagementsystem
     {
         public static async Task Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-             .Enrich.FromLogContext()
-             .WriteTo.Console()
-             .CreateBootstrapLogger();
 
-            Log.Information("Hello, world from serilog!");
+            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 
-            var host = CreateHostBuilder(args).Build();//.Run();
-
-            using(var scope = host.Services.CreateScope())
+            try
             {
-                var services = scope.ServiceProvider;
-               // var logger = services.GetRequiredService<ILogger<Program>>();
-               
-                try
-                {
-                    var dbContext = services.GetRequiredService<ApplicationDbContext>();
-                    Log.Information("Migrating database");
-                    await dbContext.Database.MigrateAsync();
-                    Log.Information("Done Migrating database");
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, ex.Message);
-                }
-            }
+                var host = CreateHostBuilder(args).Build();
 
-            Log.Information("Starting web host");
-            host.Run();
+                using (var scope = host.Services.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+
+                    try
+                    {
+                        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+                        logger.Info("Migrating database");
+                        await dbContext.Database.MigrateAsync();
+                        logger.Info("Done Migrating database");
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, ex.Message);
+                    }
+                }
+
+                logger.Info("Starting web host...");
+                host.Run();
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+            }
+            finally
+            {
+                NLog.LogManager.Shutdown();
+            }
+            
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .UseSerilog((context, services, configuration) => configuration
-                    .ReadFrom.Configuration(context.Configuration)
-                    .ReadFrom.Services(services)
-                    .Enrich.FromLogContext()
-                    .WriteTo.Console())
+            Host.CreateDefaultBuilder(args)                
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                })
+                .ConfigureLogging(logger =>
+                {
+                    logger.ClearProviders();
+                })
+                .UseNLog();
     }
 }
